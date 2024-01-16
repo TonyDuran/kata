@@ -1,6 +1,9 @@
 ![example workflow](https://github.com/TonyDuran/kata/actions/workflows/github-actions.yml/badge.svg)
 # Kata
 
+
+![https://leetcode.com/TonyDuran/](https://leetcode.com/static/images/LeetCode_Sharing.png)
+
 ### To-Dos: Need to migrate my solutions from my private repo to here
 - [x] HackerRank
 - [x] LeetCode
