@@ -2,7 +2,7 @@
 # Kata
 
 
-![https://leetcode.com/TonyDuran/](https://leetcode.com/static/images/LeetCode_Sharing.png)
+[![LeetCode Profile](https://leetcode.com/static/images/LeetCode_Sharing.png)](https://leetcode.com/TonyDuran/)
 
 ### To-Dos: Need to migrate my solutions from my private repo to here
 - [x] HackerRank
