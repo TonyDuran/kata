@@ -1,4 +1,4 @@
-name: GitHub Actions
+name: LeetCode Tests
 run-name: ${{ github.actor }} is testing Leet Code solutions 🚀
 on: [push]
 jobs:
