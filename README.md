@@ -1,7 +1,7 @@
 # Kata
 
 ### To-Dos: Need to migrate my solutions from my private repo to here
-- [ ] HackerRank
+- [x] HackerRank
 - [ ] LeetCode
 - [ ] HackTheBox
 
