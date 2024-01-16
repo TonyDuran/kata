@@ -1,0 +1,22 @@
+name: GitHub Actions
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10  # Choose the Python version you need
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+        working-directory: ${{ github.workspace }}
+
+      - name: Run pytest
+        run: |
+          pytest LeetCode/Python/
+        working-directory: ${{ github.workspace }}
