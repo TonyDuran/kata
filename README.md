@@ -1,3 +1,4 @@
+![example workflow](https://github.com/TonyDuran/kata/actions/workflows/github-actions.yml/badge.svg)
 # Kata
 
 ### To-Dos: Need to migrate my solutions from my private repo to here
