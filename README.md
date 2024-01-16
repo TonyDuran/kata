@@ -1,17 +1,6 @@
 ![example workflow](https://github.com/TonyDuran/kata/actions/workflows/github-actions.yml/badge.svg)
 # Kata
 
-LeetCode Profile
-
-[![LeetCode Profile](https://leetcode.com/static/images/LeetCode_Sharing.png)](https://leetcode.com/TonyDuran/)
-
-HackerRank Profile
-
-
-<a href="https://www.hackerrank.com/profile/_TonyDuran">
-    <img src="https://hrcdn.net/og/default.jpg" alt="LeetCode Profile" width="500" height="240">
-</a>
-
 
 ### To-Dos: Need to migrate my solutions from my private repo to here
 - [x] HackerRank
@@ -42,3 +31,21 @@ Feedback, discussions, and collaborations are always welcome. If 'kata' resonate
 Let's embark on this journey of continuous improvement and mastery in coding together!
 
 Happy coding!
+
+## Website Profiles
+LeetCode Profile
+
+[![LeetCode Profile](https://leetcode.com/static/images/LeetCode_Sharing.png)](https://leetcode.com/TonyDuran/)
+
+HackerRank Profile
+
+
+<a href="https://www.hackerrank.com/profile/_TonyDuran">
+    <img src="https://hrcdn.net/og/default.jpg" alt="HackerRank Profile" width="500" height="240">
+</a>
+
+Hack The box Profile
+
+<a href="https://app.hackthebox.com/profile/924238">
+    <img src="https://www.hackthebox.com/images/landingv3/og/og-homepage.jpg" alt="HackTheBox Profile" width="500" height="240">
+</a>
