@@ -1,12 +1,6 @@
 ![example workflow](https://github.com/TonyDuran/kata/actions/workflows/github-actions.yml/badge.svg)
 # Kata
 
-
-### To-Dos: Need to migrate my solutions from my private repo to here
-- [x] HackerRank
-- [x] LeetCode
-- [ ] HackTheBox
-
 ## AI Generated Description
 🌐 Kata: Mastering Code Through Practice 🚀
 
@@ -26,7 +20,7 @@ Inspiration and Resource for Peers: Whether it's for interview prep, skill enhan
 In martial arts, kata is not just about learning techniques; it's about cultivating patience, attention to detail, and a deep understanding of one's art. Similarly, in coding, regular practice through challenges not only hones technical skills but also fosters a deeper appreciation of the intricacies of programming.
 
 💬 Connect and Collaborate:
-Feedback, discussions, and collaborations are always welcome. If 'kata' resonates with you, or if you have insights and contributions, feel free to connect.
+Feedback, discussions, and collaborations are always welcome. If 'kata' resonates with you, or if you have insights and contributions, [feel free to connect](https://www.linkedin.com/in/tonyduran1/).
 
 Let's embark on this journey of continuous improvement and mastery in coding together!
 

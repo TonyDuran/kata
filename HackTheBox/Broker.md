@@ -11,7 +11,7 @@ Metadata:
 
 Started with running `nmap -sS <target-ip>` to get some information on the server. Learned that 22 & 80 were open. The fact it is using Nginx will be important later.
 
-When you go to `http://<target-ip>'re prompted with a basic auth pop-up. Of course, `admin/admin` would work.
+When you go to `http://<target-ip>`re prompted with a basic auth pop-up. Of course, `admin/admin` would work.
 
 After logging in, you're directed to the splash page of ActiveMQ with the version: `5.15.15` (think I went to /admin to see the version). This is important because it is vulnerable to RCE [CVE-2023-46604](https://nvd.nist.gov/vuln/detail/CVE-2023-46604)
 
