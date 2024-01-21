@@ -5,8 +5,10 @@ Metadata:
 - OS: Linux
 - Difficulty: Easy
 - Status: Retired
-- TARGET=10.10.11.252
-- HOST=my IP
+- TARGET:10.10.11.252
+- HOST:my IP
+- used_hint: yes
+---
 
 ## Recon
 Start off with an nmap scan.
@@ -52,7 +54,8 @@ So I go to my `/etc/hosts` and add an entry for the target.
 
 10.10.11.252 bizness.htb
 ```
-Looks like another server with nginx. I might be able to use the same vulnerability as `Broker` to get the root flag.
+
+Looks like another server with nginx. Maybe, I might be able to use the same vulnerability as `Broker` to get the root flag (did not).
 
 ### Dirbuster
 Since I'm not sure what is available on this server. I ran `dirbuster`.
@@ -96,7 +99,6 @@ ncat -lvnp 1337
 ```
 ### User flag
 This makes getting a shell super easy. So no problem, `cat /home/ofbiz/user.txt`
-
 
 
 ## Privilege Escalation
@@ -163,7 +165,9 @@ another version of grep gives me the full line
 3:44:54.272" lastUpdatedTxStamp="2023-12-16 03:44:54.213" requirePasswordChange="N" userLoginId="admin"/>
 ```
 
-`$SHA$d$uP0_QaVBpDWFeo8-dRzDqRwXQ2I` here is the password! UPDATE: realized I was missing a trailing `=`. Why it took forever for my crack to work. unsure why the trailing `=` isn't in the output. Something to learn in the future.
+`$SHA$d$uP0_QaVBpDWFeo8-dRzDqRwXQ2I` here is the password! UPDATE: realized I was missing a trailing `=`. Why it took forever for my crack to work. unsure why the trailing `=` isn't in the output.
+
+NOTE: Something to learn in the future.
 
 
 
