@@ -270,4 +270,4 @@ Once you know what is running and you can find a CVE, getting onto the box isn't
 
 My takeaway from this challenge is I learned how one might find the salted password written. I plan to take that code and turn it into a utility. Might be useful in the future.
 
-As always, thank you to the write-ups/PoCs listed. I couldn't have done it without you. Overtime, I hope to stay up-to-date solving boxes before there are write-ups.
+As always, thank you to the write-ups/PoCs listed. I couldn't have done it without you. Over time, I hope to stay up-to-date solving boxes before there are write-ups.
