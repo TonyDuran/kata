@@ -52,36 +52,45 @@ class PasswordEncryptor:
 
 
 # Parse command-line arguments
-parser = argparse.ArgumentParser(description='Password Encryption Utility')
-parser.add_argument('--hash_type', type=str, default='SHA1', help='Hash type (default: SHA1)')
-parser.add_argument('--salt', type=str, required=True, help='Salt for hashing')
-parser.add_argument('--search', type=str, required=True, help='Hash to search for')
-parser.add_argument('--wordlist', type=str, required=True, help='Path to wordlist file')
+def main():
+    parser = argparse.ArgumentParser(
+            description='Password Encryption Utility',
+            usage='''python your_script.py --hash_type <HASH_TYPE> --salt <SALT> --search <SEARCH_HASH> --wordlist <WORDLIST_PATH>
+    Example:
+        python your_script.py --hash_type SHA256 --salt "example_salt" --search 'example_hash' --wordlist "/path/to/wordlist.txt"'''
+    )
+    parser.add_argument('--hash_type', type=str, default='SHA1', help='Hash type (default: SHA1)')
+    parser.add_argument('--salt', type=str, required=True, help='Salt for hashing')
+    parser.add_argument('--search', type=str, required=True, help='Hash to search for. Note: use single quote')
+    parser.add_argument('--wordlist', type=str, required=True, help='Path to wordlist file')
 
-args = parser.parse_args()
+    args = parser.parse_args()
 
-# Use the parsed arguments
-hash_type = args.hash_type
-salt = args.salt
-search = args.search
-wordlist = args.wordlist
+    # Use the parsed arguments
+    hash_type = args.hash_type
+    salt = args.salt
+    search = args.search
+    wordlist = args.wordlist
 
-# Create an instance of the PasswordEncryptor class
-encryptor = PasswordEncryptor(hash_type)
+    # Create an instance of the PasswordEncryptor class
+    encryptor = PasswordEncryptor(hash_type)
 
-# Get the number of lines in the wordlist for the loading bar
-total_lines = sum(1 for _ in open(wordlist, 'r', encoding='latin-1'))
+    # Get the number of lines in the wordlist for the loading bar
+    total_lines = sum(1 for _ in open(wordlist, 'r', encoding='latin-1'))
 
-# Iterate through the wordlist with a loading bar and check for a matching password
-with open(wordlist, 'r', encoding='latin-1') as password_list:
-    for password in tqdm(password_list, total=total_lines, desc="Processing"):
-        value = password.strip()
+    # Iterate through the wordlist with a loading bar and check for a matching password
+    with open(wordlist, 'r', encoding='latin-1') as password_list:
+        for password in tqdm(password_list, total=total_lines, desc="Processing"):
+            value = password.strip()
 
-        # Get the encrypted password
-        hashed_password = encryptor.crypt_bytes(salt, value.encode('utf-8'))
+            # Get the encrypted password
+            hashed_password = encryptor.crypt_bytes(salt, value.encode('utf-8'))
 
-        # Compare with the search hash
-        if hashed_password == search:
-            print(f'Found Password: {value}, hash: {hashed_password}')
-            break  # Stop the loop if a match is found
+            # Compare with the search hash
+            if hashed_password == search:
+                print(f'Found Password: {value}, hash: {hashed_password}')
+                break  # Stop the loop if a match is found
 
+
+if __name__ == "__main__":
+    main()
