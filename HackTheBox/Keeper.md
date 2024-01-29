@@ -1,5 +1,5 @@
 # Keeper
-Week 3 of trying to consistently solve a HTB. This one might have been too easy, but that's okay.
+Week 3 of trying to consistently solve a HTB.
 
 Metadata:
 - OS: Linux
@@ -75,7 +75,7 @@ This is what I think makes this box actually easy - inside the home directory. Y
 Fortunately, I'm actually familiar with KeePass from a previous job. KeePass is a password manager. So I knew the kdbx file is an encrypted file containing a root password.
 
 ```bash
-`ls -lah
+ls -lah
 total 326M
 drwxr-xr-x 6 lnorgaard lnorgaard 4.0K Jan 28 21:42 .
 drwxr-xr-x 3 root      root      4.0K May 24  2023 ..
@@ -91,7 +91,6 @@ drwx------ 2 lnorgaard lnorgaard 4.0K May 24  2023 .cache
 drwx------ 2 lnorgaard lnorgaard 4.0K Jul 24  2023 .ssh
 -rw-r----- 1 root      lnorgaard   33 Jan 28 18:30 user.txt
 -rw-r--r-- 1 root      root        39 Jul 20  2023 .vimrc
-`
 ```
 
 With a quick Google search: `keepass dump file exploit`, you find this [PoC from github](https://github.com/vdohney/keepass-password-dumper?tab=readme-ov-file).
