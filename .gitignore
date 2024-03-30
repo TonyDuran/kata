@@ -162,3 +162,4 @@ cython_debug/
 HackerRank/Python/input.txt
 HackerRank/Python/out.txt
 HackerRank/Python/sol_out.txt
+LeetCode/Rust/target
