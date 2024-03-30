@@ -2,7 +2,7 @@ name: LeetCode Tests
 run-name: ${{ github.actor }} is testing Leet Code solutions 🚀
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  Python-Tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
