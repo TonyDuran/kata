@@ -42,7 +42,6 @@ class Solution:
 
             if idx == median:
                 if is_odd:
-                    print("is_odd")
                     return curr_num_one if curr_num_one < curr_num_two else curr_num_two
                 else:
                     val_one = nums1.pop(0) if curr_num_one < curr_num_two else nums2.pop(0)
