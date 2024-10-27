@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import sys
 import requests
-import shutil
+import argparse
 
 def sha256_file(filepath: Path) -> str:
     """Calculate SHA256 hash of a file."""
@@ -13,63 +13,67 @@ def sha256_file(filepath: Path) -> str:
             sha256_hash.update(byte_block)
     return sha256_hash.hexdigest()
 
-def download_file(url: str, destination: Path) -> bool:
-    """Download a file from URL to destination."""
+def download_file(filename: str, destination: Path) -> bool:
+    """Download a file from GitHub to destination."""
+    url = f"https://raw.githubusercontent.com/gt-cs6200/image_data/master/{filename}"
     try:
+        print(f"Downloading: {filename}")
         response = requests.get(url)
         response.raise_for_status()
+        destination.parent.mkdir(parents=True, exist_ok=True)
         with open(destination, 'wb') as f:
             f.write(response.content)
         return True
     except Exception as e:
-        print(f"Failed to download {url}: {e}")
+        print(f"Failed to download {filename}: {e}")
         return False
 
-def validate_files():
-    # Setup paths and URLs
-    base_url = "https://raw.githubusercontent.com/gt-cs6200/image_data"
-    master_dir = Path.cwd() / "master"
+def get_filename_from_path(path: str) -> str:
+    """Extract filename from path by taking everything after the last '/'."""
+    return path.split('/')[-1]
+
+def validate_files(master_dir: Path):
     tmp_dir = Path("/tmp/proxy_test")
+    tmp_dir.mkdir(parents=True, exist_ok=True)
 
     if not master_dir.exists():
         print(f"Error: {master_dir} does not exist!")
         sys.exit(1)
 
-    # Clean/create tmp directory
-    if tmp_dir.exists():
-        print(f"Cleaning {tmp_dir}")
-        shutil.rmtree(tmp_dir)
-    tmp_dir.mkdir(parents=True)
-    print("Created clean test directory")
-
-    # Read workload file and download files
+    # Read workload file and extract just the filenames
     try:
         with open("workload.txt", 'r') as f:
-            files = [line.strip() for line in f if line.strip()]
+            filenames = [get_filename_from_path(line.strip())
+                        for line in f if line.strip()]
     except FileNotFoundError:
         print("Error: workload.txt not found!")
         sys.exit(1)
 
-    print("\nDownloading files...")
-    for file_path in files:
-        # Clean the path and get just the filename
-        clean_path = file_path.lstrip('/')
-        if clean_path.startswith('master/'):
-            clean_path = clean_path[7:]
+    print("\nChecking for missing files...")
+    # Check which files need downloading
+    files_to_download = []
+    for filename in filenames:
+        tmp_file = tmp_dir / filename
+        if not tmp_file.exists():
+            print(f"Warning: {filename} not found in {tmp_dir}, will download")
+            files_to_download.append(filename)
 
-        url = f"{base_url}/master/{clean_path}"
-        destination = tmp_dir / clean_path
+    # Download any missing files
+    if files_to_download:
+        print("\nDownloading missing files...")
+        for filename in files_to_download:
+            destination = tmp_dir / filename
+            if not download_file(filename, destination):
+                print(f"Failed to download {filename}")
+                sys.exit(1)
+    else:
+        print("All files present in tmp directory")
 
-        print(f"Downloading {clean_path}...")
-        if not download_file(url, destination):
-            print(f"Failed to download {clean_path}")
-            sys.exit(1)
-
-    print("\nValidating downloaded files...")
+    print("\nValidating files...")
     failures = []
     success_count = 0
 
-    # Compare downloaded files with master
+    # Compare files
     master_files = list(master_dir.glob("*"))
     for master_file in master_files:
         tmp_file = tmp_dir / master_file.name
@@ -104,6 +108,14 @@ def validate_files():
     else:
         print("\nAll files validated successfully!")
 
+def main():
+    parser = argparse.ArgumentParser(description='Validate proxy-downloaded files')
+    parser.add_argument('--master-dir', type=Path, default=Path.cwd() / "master",
+                        help='Directory containing master files (default: ./master)')
+    args = parser.parse_args()
+
+    validate_files(args.master_dir)
+
 if __name__ == "__main__":
-    validate_files()
+    main()
 
